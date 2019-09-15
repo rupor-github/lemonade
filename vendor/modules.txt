@@ -1,0 +1,12 @@
+# github.com/BurntSushi/toml v0.3.1
+github.com/BurntSushi/toml
+# github.com/atotto/clipboard v0.1.2
+github.com/atotto/clipboard
+# github.com/mitchellh/go-homedir v1.1.0
+github.com/mitchellh/go-homedir
+# github.com/monochromegane/conflag v0.0.0-20151130130520-6d68c9aa4183
+github.com/monochromegane/conflag
+# github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e
+github.com/skratchdot/open-golang/open
+# gopkg.in/yaml.v2 v2.2.2
+gopkg.in/yaml.v2

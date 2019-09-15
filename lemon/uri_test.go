@@ -1,4 +1,4 @@
-package server
+package lemon
 
 import (
 	"net"
@@ -25,21 +25,20 @@ type ConnMock struct {
 	addr *net.TCPAddr
 }
 
-func (_ *ConnMock) Read([]byte) (int, error)         { return 0, nil }
-func (_ *ConnMock) Write([]byte) (int, error)        { return 0, nil }
-func (_ *ConnMock) Close() error                     { return nil }
-func (_ *ConnMock) LocalAddr() net.Addr              { return nil }
-func (c *ConnMock) RemoteAddr() net.Addr             { return c.addr }
-func (_ *ConnMock) SetDeadline(time.Time) error      { return nil }
-func (_ *ConnMock) SetReadDeadline(time.Time) error  { return nil }
-func (_ *ConnMock) SetWriteDeadline(time.Time) error { return nil }
+func (*ConnMock) Read([]byte) (int, error)         { return 0, nil }
+func (*ConnMock) Write([]byte) (int, error)        { return 0, nil }
+func (*ConnMock) Close() error                     { return nil }
+func (*ConnMock) LocalAddr() net.Addr              { return nil }
+func (c *ConnMock) RemoteAddr() net.Addr           { return c.addr }
+func (*ConnMock) SetDeadline(time.Time) error      { return nil }
+func (*ConnMock) SetReadDeadline(time.Time) error  { return nil }
+func (*ConnMock) SetWriteDeadline(time.Time) error { return nil }
 
 var _ net.Conn = &ConnMock{}
 
 func TestURItranslateLoopbackIP(t *testing.T) {
 	assert := func(uri string, conn net.Conn, expected string) {
-		u := &URI{}
-		got := u.translateLoopbackIP(uri, conn)
+		got := translateLoopbackIP(uri, conn)
 		if got != expected {
 			t.Errorf("Expected: %s, but got %s", expected, got)
 		}

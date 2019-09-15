@@ -2,76 +2,61 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"net/rpc"
 
-	log "github.com/inconshreveable/log15"
-
-	"github.com/lemonade-command/lemonade/lemon"
-	"github.com/pocke/go-iprange"
+	"lemonade/lemon"
 )
 
-var connCh = make(chan net.Conn, 1)
+// Serve starts "lemonade" server backend.
+func Serve(c *lemon.CLI) error {
 
-var LineEndingOpt string
-
-func Serve(c *lemon.CLI, logger log.Logger) error {
-	port := c.Port
-	allowIP := c.Allow
-	LineEndingOpt = c.LineEnding
-	ra, err := iprange.New(allowIP)
+	uri := lemon.NewURI(c)
+	if err := rpc.Register(uri); err != nil {
+		return fmt.Errorf("unable to register URI rpc: %w", err)
+	}
+	clip := lemon.NewClipboard(c)
+	if err := rpc.Register(clip); err != nil {
+		return fmt.Errorf("unable to register Clipboard rpc: %w", err)
+	}
+	ra, err := lemon.NewRange(c.Allow)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to process allowed IP ranges: %w", err)
 	}
 
-	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", port))
+	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf(":%d", c.Port))
 	if err != nil {
-		return err
+		return fmt.Errorf("ResolveTCPAddr error: '%w'", err)
 	}
+
 	l, err := net.ListenTCP("tcp", addr)
 	if err != nil {
-		return err
+		return fmt.Errorf("ListenTCP error: '%w'", err)
 	}
+	defer l.Close()
 
 	for {
 		conn, err := l.Accept()
 		if err != nil {
-			logger.Error(err.Error())
-			continue
+			return fmt.Errorf("lemonade server Accept error: '%w'", err)
 		}
-		logger.Info("Request from " + conn.RemoteAddr().String())
-		if !ra.InlucdeConn(conn) {
-			continue
+		if c.Debug {
+			log.Printf("lemonade server request from '%s'", conn.RemoteAddr())
 		}
-		connCh <- conn
-		rpc.ServeConn(conn)
-	}
-}
+		go func(conn net.Conn) {
+			defer conn.Close()
 
-// ServeLocal is for fall back when lemonade client can't connect to server.
-// returns port number, error
-func ServeLocal(logger log.Logger) (int, error) {
-	l, err := net.Listen("tcp", "localhost:0")
-	if err != nil {
-		return 0, err
-	}
-	go func() {
-		for {
-			conn, err := l.Accept()
-			if err != nil {
-				logger.Crit(err.Error())
-				continue
+			if c.Debug {
+				log.Printf("lemonade server request from '%s'", conn.RemoteAddr())
 			}
-			connCh <- conn
-			rpc.ServeConn(conn)
-		}
-	}()
-	return l.Addr().(*net.TCPAddr).Port, nil
-}
-
-func init() {
-	uri := &URI{}
-	rpc.Register(uri)
-	clipboard := &Clipboard{}
-	rpc.Register(clipboard)
+			if ra.IsConnIn(conn) {
+				c.ConnCh <- conn
+				rpc.ServeConn(conn)
+				if c.Debug {
+					log.Printf("lemonade server done with '%s'", conn.RemoteAddr())
+				}
+			}
+		}(conn)
+	}
 }
