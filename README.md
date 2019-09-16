@@ -1,10 +1,25 @@
-Lemonade
-========
-
-Lemonade is a remote utility tool - copy, paste and open browser over TCP.
+<p align="center">
+    <h1 align="center">lemonade</h1>
+    <p align="center">
+		Lemonade is a remote utility tool - copy, paste and open browser over TCP.
+    </p>
+    <p align="center">
+        <a href="https://godoc.org/github.com/rupor-github/lemonade"><img alt="GoDoc" src="https://img.shields.io/badge/godoc-reference-blue.svg" /></a>
+        <a href="https://goreportcard.com/report/github.com/rupor-github/lemonade"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/rupor-github/lemonade" /></a>
+    </p>
+    <hr>
+</p>
 
 Installation
 ------------
+
+### From binaries
+
+Download from the [releases page](https://github.com/rupor-github/lemonade/releases) and unpack it in a convenient location.
+
+### From source
+
+I am using cmake to build it from sources, included `CMakeList.txt` expects host platform to be up to date `linux` with go 1.13 or later installed. See `build-all.sh` for example of cross compile for all supported platforms.
 
 Configuration and examples
 ----------------
