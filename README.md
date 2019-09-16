@@ -19,7 +19,7 @@ Download from the [releases page](https://github.com/rupor-github/lemonade/relea
 
 ### From source
 
-I am using cmake to build it from sources, included `CMakeList.txt` expects host platform to be up to date `linux` with go 1.13 or later installed. See `build-all.sh` for example of cross compile for all supported platforms.
+I am using `cmake` to build it from sources, included `CMakeList.txt` expects host platform to be up to date `linux` with go 1.13 or later installed. See `build-all.sh` for example of cross compile for all supported platforms.
 
 Configuration and examples
 ----------------
@@ -38,3 +38,14 @@ Changes
 * In order for "open" call to work properly when sending back file ("trans-localfile") additional information needs to be transferred because SSH port forwarding has been chosen for security and actual remote address is never available.
 
 I attempted to support backward compatibility as much as I could leaving argument processing mostly unchanged. Everywhere possible I switched code to go stdlib minimizing external dependencies.
+
+## Credit
+
+* Thanks to [Masataka Pocke Kuwabara](https://github.com/pocke) for original [lemonade](https://github.com/lemonade-command/lemonade)
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Licensed under MIT license.
+
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
