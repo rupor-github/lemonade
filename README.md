@@ -14,13 +14,12 @@ Please, see original project [here](https://github.com/lemonade-command/lemonade
 Reason for forking
 ----------------
 
-Original project after v1.1.1 was mostly unmaintained.
+Original project felt like an orphan and I needed some additional functionality. In addition latest PRs look unnecessary to me. Result should be fully compatible with previous releases - if not, please open issue here. 
 
 Changes
 ----------------
 
-* Code modernization/simplification/refactoring
-* Several connection leaks have been detected and removed and various serving components changed slightly.
-* In order for "open" call to work properly when sending back ("trans-localfile") actual file different information needs to be transferred because SSH port forwarding has been chosen for security and actual remote address is not available.
+* Code modernization/simplification/refactoring (go modules and latest compiler, etc).
+* In order for "open" call to work properly when sending back file ("trans-localfile") additional information needs to be transferred because SSH port forwarding has been chosen for security and actual remote address is never available.
 
-I left command line processing mostly unchanged to provide backward compatibility with old releases, only help printouts have been changed. Everywhere possible I switched code back to go stdlib minimizing dependencies.
+I attempted to support backward compatibility as much as I could leaving argument processing mostly unchanged. Everywhere possible I switched code to go stdlib minimizing external dependencies.

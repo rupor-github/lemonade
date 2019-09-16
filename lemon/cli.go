@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"time"
 
 	"lemonade/misc"
 )
@@ -27,28 +28,21 @@ const (
 	CmdServer
 )
 
-// Status codes to be set by os.Exit()
-const (
-	Success        = 0
-	FlagParseError = iota + 10
-	RPCError
-	Help
-)
-
 // CLI holds program state.
 type CLI struct {
 	Cmd        Command
 	DataSource string
 
 	// option flags
-	Port           int
-	Allow          string
-	Host           string
-	TransLoopback  bool
-	TransLocalfile bool
-	LineEnding     string
-	Help           bool
-	Debug          bool
+	Port             int
+	Allow            string
+	Host             string
+	TransLoopback    bool
+	TransLocalfile   bool
+	TransFileTimeout time.Duration
+	LineEnding       string
+	Help             bool
+	Debug            bool
 	// and our flagset
 	Flags *flag.FlagSet
 
@@ -66,12 +60,13 @@ func New() *CLI {
 
 	c.Flags.BoolVar(&c.Help, "help", false, "Show this message")
 	c.Flags.IntVar(&c.Port, "port", 2489, "TCP port number")
-	c.Flags.StringVar(&c.Allow, "allow", "0.0.0.0/0,::/0", "Allow IP range [Server only]")
-	c.Flags.StringVar(&c.Host, "host", "localhost", "Destination host name [Client only]")
+	c.Flags.StringVar(&c.Allow, "allow", "0.0.0.0/0,::/0", "Allow IP range [server only]")
+	c.Flags.StringVar(&c.Host, "host", "localhost", "Destination host name [client only]")
 	c.Flags.StringVar(&c.LineEnding, "line-ending", "", "Convert Line Endings (LF/CRLF)")
-	c.Flags.BoolVar(&c.TransLoopback, "trans-loopback", true, "Translate loopback address [open command only]")
-	c.Flags.BoolVar(&c.TransLocalfile, "trans-localfile", true, "Translate local file [open command only]")
-	c.Flags.BoolVar(&c.Debug, "debug", false, "Pring verbose debugging information")
+	c.Flags.BoolVar(&c.TransLoopback, "trans-loopback", true, "Replace loopback address [open command only]")
+	c.Flags.BoolVar(&c.TransLocalfile, "trans-localfile", true, "Transfer local file [open command only]")
+	c.Flags.DurationVar(&c.TransFileTimeout, "trans-localfile-timeout", time.Second, "How long to wait for local file transfer request [open command only]")
+	c.Flags.BoolVar(&c.Debug, "debug", false, "Print verbose debugging information")
 
 	c.Flags.Usage = func() {
 		var buf strings.Builder
@@ -105,7 +100,6 @@ Options:
 
 // ProcessRPC makes RPC call.
 func (c *CLI) ProcessRPC(f func(*rpc.Client) error) error {
-
 	rc, err := rpc.Dial("tcp", fmt.Sprintf("%s:%d", c.Host, c.Port))
 	if err != nil {
 		return err

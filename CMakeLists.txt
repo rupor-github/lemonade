@@ -20,11 +20,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 # Release installation directory
 if(CMAKE_CROSSCOMPILING)
-    if(MSYSTEM_NAME STREQUAL "win32")
+    if(MSYSTEM_NAME STREQUAL "windows_i386")
         set(CROSS_GOOS windows)
         set(CROSS_GOARCH 386)
         message(STATUS "Targeting 32 bits Windows executable")
-    elseif(MSYSTEM_NAME STREQUAL "win64")
+    elseif(MSYSTEM_NAME STREQUAL "windows_amd64")
         set(CROSS_GOOS windows)
         set(CROSS_GOARCH amd64)
         message(STATUS "Targeting 64 bits Windows executable")
@@ -39,12 +39,12 @@ else()
     if (NOT "$ENV{MSYSTEM_NAME}" STREQUAL "")
         set(MSYSTEM_NAME "$ENV{MSYSTEM_NAME}" CACHE INTERNAL "Copied from environment")
     endif()
-    if("$ENV{MSYSTEM_NAME}" STREQUAL "linux32")
+    if("$ENV{MSYSTEM_NAME}" STREQUAL "linux_i386")
         set(CROSS_GOOS linux)
         set(CROSS_GOARCH 386)
         message(STATUS "Targeting 32 bits Linux executable")
     else()
-        # host platform is always linux amd64
+        # host platform is always linux_amd64
         message(STATUS "Targeting 64 bits Linux executable")
     endif()
 endif()
@@ -72,7 +72,7 @@ endif()
 
 # Project version number
 set(PRJ_VERSION_MAJOR 1)
-set(PRJ_VERSION_MINOR 1.2)
+set(PRJ_VERSION_MINOR 2.0)
 
 if (EXISTS "${PROJECT_SOURCE_DIR}/.git" AND IS_DIRECTORY "${PROJECT_SOURCE_DIR}/.git")
     execute_process(COMMAND ${CMAKE_SOURCE_DIR}/cmake/githash.sh ${GIT_EXECUTABLE}

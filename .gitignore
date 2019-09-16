@@ -19,8 +19,10 @@
 .idea/
 .vscode/
 build/
+build_*/
 release/
 bin/
+bin_*/
 _obj/
 pkg/
 _test/

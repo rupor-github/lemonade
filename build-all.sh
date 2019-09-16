@@ -33,7 +33,7 @@ RED='[38;5;01m'
 YELLOW='[38;5;03m'
 
 readonly ALL_OFF BOLD BLUE GREEN RED YELLOW
-ARCH_INSTALLS="${ARCH_INSTALLS:-win32 win64 linux32 linux64 darwin}"
+ARCH_INSTALLS="${ARCH_INSTALLS:-windows_i386 windows_amd64 linux_i386 linux_amd64 darwin}"
 
 if not command -v cmake >/dev/null 2>&1; then
     print_error "No cmake found - please, install"
@@ -68,7 +68,7 @@ for _arch in ${ARCH_INSTALLS}; do
 
         if [[ ${_arch} == linux* ]]; then
             MSYSTEM_NAME=${_arch} cmake -DCMAKE_BUILD_TYPE=Release ..
-        elif [[ ${_arch} == win* ]]; then
+        elif [[ ${_arch} == windows* ]]; then
             cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=cmake/${_arch}.toolchain ..
         else
             cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=cmake/${_arch}.toolchain ..
@@ -76,9 +76,9 @@ for _arch in ${ARCH_INSTALLS}; do
         ${mk} install
     )
     (
-        [ -f lemonade-${_arch}.7z ] && rm lemonade-${_arch}.7z
+        [ -f lemonade_${_arch}.7z ] && rm lemonade_${_arch}.7z
         cd ${_dist}
-        7z a -r ../lemonade-${_arch}
+        7z a -r ../lemonade_${_arch}
     )
 done
 

@@ -3,6 +3,7 @@ package lemon
 import (
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestCLIParse(t *testing.T) {
@@ -28,143 +29,158 @@ func TestCLIParse(t *testing.T) {
 	defaultAllow := "0.0.0.0/0,::/0"
 
 	assert([]string{"xdg-open", "http://example.com"}, CLI{
-		Cmd:            CmdOpen,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		DataSource:     "http://example.com",
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdOpen,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		DataSource:       "http://example.com",
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"/usr/bin/xdg-open", "http://example.com"}, CLI{
-		Cmd:            CmdOpen,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		DataSource:     "http://example.com",
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdOpen,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		DataSource:       "http://example.com",
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"xdg-open"}, CLI{
-		Cmd:            CmdOpen,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdOpen,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"pbpaste", "--port", "1124"}, CLI{
-		Cmd:            CmdPaste,
-		Host:           defaultHost,
-		Port:           1124,
-		Allow:          defaultAllow,
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdPaste,
+		Host:             defaultHost,
+		Port:             1124,
+		Allow:            defaultAllow,
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"/usr/bin/pbpaste", "--port", "1124"}, CLI{
-		Cmd:            CmdPaste,
-		Host:           defaultHost,
-		Port:           1124,
-		Allow:          defaultAllow,
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdPaste,
+		Host:             defaultHost,
+		Port:             1124,
+		Allow:            defaultAllow,
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"pbcopy", "hogefuga"}, CLI{
-		Cmd:            CmdCopy,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		DataSource:     "hogefuga",
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdCopy,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		DataSource:       "hogefuga",
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"/usr/bin/pbcopy", "hogefuga"}, CLI{
-		Cmd:            CmdCopy,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		DataSource:     "hogefuga",
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdCopy,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		DataSource:       "hogefuga",
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"lemonade", "--host", "192.168.0.1", "--port", "1124", "open", "http://example.com"}, CLI{
-		Cmd:            CmdOpen,
-		Host:           "192.168.0.1",
-		Port:           1124,
-		Allow:          defaultAllow,
-		DataSource:     "http://example.com",
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdOpen,
+		Host:             "192.168.0.1",
+		Port:             1124,
+		Allow:            defaultAllow,
+		DataSource:       "http://example.com",
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"lemonade", "copy", "hogefuga"}, CLI{
-		Cmd:            CmdCopy,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		DataSource:     "hogefuga",
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdCopy,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		DataSource:       "hogefuga",
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"lemonade", "paste"}, CLI{
-		Cmd:            CmdPaste,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdPaste,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"lemonade", "--allow", "192.168.0.0/24", "server", "--port", "1124"}, CLI{
-		Cmd:            CmdServer,
-		Host:           defaultHost,
-		Port:           1124,
-		Allow:          "192.168.0.0/24",
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdServer,
+		Host:             defaultHost,
+		Port:             1124,
+		Allow:            "192.168.0.0/24",
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"lemonade", "open", "--trans-loopback=false"}, CLI{
-		Cmd:            CmdOpen,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		TransLoopback:  false,
-		TransLocalfile: true,
+		Cmd:              CmdOpen,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		TransLoopback:    false,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"lemonade", "open", "--trans-loopback=true"}, CLI{
-		Cmd:            CmdOpen,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdOpen,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"lemonade", "open", "--trans-localfile=false"}, CLI{
-		Cmd:            CmdOpen,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		TransLoopback:  true,
-		TransLocalfile: false,
+		Cmd:              CmdOpen,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		TransLoopback:    true,
+		TransLocalfile:   false,
+		TransFileTimeout: time.Second,
 	})
 
 	assert([]string{"lemonade", "open", "--trans-localfile=true"}, CLI{
-		Cmd:            CmdOpen,
-		Host:           defaultHost,
-		Port:           defaultPort,
-		Allow:          defaultAllow,
-		TransLoopback:  true,
-		TransLocalfile: true,
+		Cmd:              CmdOpen,
+		Host:             defaultHost,
+		Port:             defaultPort,
+		Allow:            defaultAllow,
+		TransLoopback:    true,
+		TransLocalfile:   true,
+		TransFileTimeout: time.Second,
 	})
 }

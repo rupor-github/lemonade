@@ -10,6 +10,19 @@ import (
 	"lemonade/server"
 )
 
+// Status codes to be set by os.Exit()
+const (
+	exitSuccess = iota
+	_
+	_
+	_
+	_
+	_
+	exitFlagParseError
+	exitRPCError
+	exitHelp
+)
+
 // os.Exit() prevents defers from proper cleanup.
 func run() int {
 
@@ -17,12 +30,12 @@ func run() int {
 
 	if err := cli.ParseFlags(os.Args, false); err != nil {
 		fmt.Fprintf(os.Stderr, "\n\n*** ERROR: %s\n", err.Error())
-		return lemon.FlagParseError
+		return exitFlagParseError
 	}
 
 	if cli.Help {
 		cli.Flags.Usage()
-		return lemon.Help
+		return exitHelp
 	}
 
 	var err error
@@ -43,9 +56,9 @@ func run() int {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "\n\n*** ERROR: %s\n", err.Error())
-		return lemon.RPCError
+		return exitRPCError
 	}
-	return lemon.Success
+	return exitSuccess
 }
 
 func main() {
