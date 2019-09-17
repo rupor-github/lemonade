@@ -29,7 +29,9 @@ Please, see original project [here](https://github.com/lemonade-command/lemonade
 Reason for forking
 ----------------
 
-Original project felt like an orphan and I needed some additional functionality. In addition latest PRs look unnecessary to me. Result should be fully compatible with previous releases - if not, please open issue here. 
+Original project felt like an orphan and I needed some additional functionality. In addition latest PRs look unnecessary to me. Result should be fully compatible with previous releases - if not, please open issue here.
+
+For Windows users: lemonade "server" backend is included as part of [wsl-ssh-agent](https://github.com/rupor-github/wsl-ssh-agent) and could be run as an icon in the taskbar notification area.
 
 Changes
 ----------------
