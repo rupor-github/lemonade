@@ -40,6 +40,7 @@ type CLI struct {
 	TransLoopback    bool
 	TransLocalfile   bool
 	TransFileTimeout time.Duration
+	TransFilePort    int
 	LineEnding       string
 	Help             bool
 	Debug            bool
@@ -65,6 +66,7 @@ func New() *CLI {
 	c.Flags.StringVar(&c.LineEnding, "line-ending", "", "Convert Line Endings (LF/CRLF)")
 	c.Flags.BoolVar(&c.TransLoopback, "trans-loopback", true, "Replace loopback address [open command only]")
 	c.Flags.BoolVar(&c.TransLocalfile, "trans-localfile", true, "Transfer local file [open command only]")
+	c.Flags.IntVar(&c.TransFilePort, "trans-localfile-port", 2490, "Port to listen on transfer local file [open command only]")
 	c.Flags.DurationVar(&c.TransFileTimeout, "trans-localfile-timeout", time.Second, "How long to wait for local file transfer request [open command only]")
 	c.Flags.BoolVar(&c.Debug, "debug", false, "Print verbose debugging information")
 

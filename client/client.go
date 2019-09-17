@@ -1,12 +1,16 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"net/rpc"
 	"os"
+	"path"
+	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -71,66 +75,109 @@ func getLocalHostIPv4() string {
 	return ""
 }
 
-func serveFile(fname string, translateLoopbackIP, debug bool) (string, <-chan struct{}, error) {
+func getAddresses(port int, translateLoopbackIP, debug bool) (string, string) {
 
-	const anywhere = `:0`
+	portStr := ":" + strconv.Itoa(port)
 
-	addrListen, addrSend := `localhost:0`, `http://localhost:%d/%s`
+	addrListen, addrSend := `localhost`+portStr, `http://localhost:%d/%s`
 	if translateLoopbackIP {
 		// open to the outside world - direct connection expected
-		addrListen, addrSend = anywhere, `http://127.0.0.1:%d/%s`
+		addrListen, addrSend = portStr, `http://127.0.0.1:%d/%s`
 	} else {
 		if addr := getSSHSessionAddr(); len(addr) != 0 {
 			// if we run in SSH session - expect dynamic port forwarding
-			addrListen, addrSend = anywhere, `http://`+addr+`:%d/%s`
+			addrListen, addrSend = portStr, `http://`+addr+`:%d/%s`
 		} else if addr = getLocalHostIPv4(); len(addr) != 0 {
 			// See if could derive extrnal IPv4 for our host
-			addrListen, addrSend = anywhere, `http://`+addr+`:%d/%s`
+			addrListen, addrSend = portStr, `http://`+addr+`:%d/%s`
 		}
 	}
 	if debug {
-		log.Printf("Serving addresses - listen: '%s' send: '%s'", addrListen, addrSend)
+		log.Printf("serveFile listen address: '%s' send URL: '%s'", addrListen, addrSend)
 	}
+	return addrListen, addrSend
+}
+
+func getfileHandler(fname string, srv *http.Server, finished chan *http.Server, debug bool) func(w http.ResponseWriter, r *http.Request) {
+	// NOTE: There is still a chance that serving actual file will be completed before any additional requests from the browser
+	// generating ssh "channel X: open failed: connect failed: Connection refused" messages, especially when everything is slow
+	// due to network congestion or excessive debug logging.
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		if debug {
+			log.Printf("Processing request '%s'", r.URL)
+		}
+
+		if filepath.Base(fname) != path.Base(r.URL.String()) {
+			if debug {
+				log.Print("Not serving...")
+			}
+			http.Error(w, "not serving...", http.StatusNotFound)
+			return
+		}
+
+		// Kill caching
+		for _, v := range etagHeaders {
+			r.Header.Del(v)
+		}
+		for k, v := range noCacheHeaders {
+			w.Header().Set(k, v)
+		}
+
+		if debug {
+			log.Printf("Transferring file '%s'", fname)
+		}
+
+		f, err := os.Open(fname)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer func() {
+			if debug {
+				log.Printf("Servng '%s' is completed", fname)
+			}
+			f.Close()
+		}()
+
+		http.ServeContent(w, r, fname, time.Unix(0, 0), f)
+		finished <- srv
+	}
+}
+
+// NOTE: we actuall need real server here - browsers like to ask for /favicon.ico etc. especially when ports are selected randomly and
+// request url is changing. If not answered properly it will generate channel errors when ssh dynamic port forwarding is used.
+func serveFile(fname string, port int, timeout time.Duration, translateLoopbackIP, debug bool) (string, <-chan *http.Server, error) {
+
+	addrListen, addrSend := getAddresses(port, translateLoopbackIP, debug)
 
 	l, err := net.Listen("tcp", addrListen)
 	if err != nil {
 		return "", nil, err
 	}
 
-	finished := make(chan struct{})
+	finished := make(chan *http.Server)
+
+	srv := &http.Server{
+		Addr:         addrListen,
+		ReadTimeout:  timeout,
+		WriteTimeout: timeout,
+	}
+	m := http.NewServeMux()
+	m.HandleFunc("/", getfileHandler(fname, srv, finished, debug))
+	srv.Handler = m
+
 	go func() {
-
 		if debug {
-			log.Printf("Serving '%s' on %s", fname, l.Addr())
+			log.Printf("Starting http server for '%s'", fname)
 		}
-
-		_ = http.Serve(l, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-			// Kill caching
-			for _, v := range etagHeaders {
-				r.Header.Del(v)
-			}
-			for k, v := range noCacheHeaders {
-				w.Header().Set(k, v)
-			}
-
-			f, err := os.Open(fname)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			defer f.Close()
-
-			http.ServeContent(w, r, fname, time.Unix(0, 0), f)
-			if wf, ok := w.(http.Flusher); ok {
-				wf.Flush()
-			}
-
-			finished <- struct{}{}
-		}))
+		_ = srv.Serve(l)
 	}()
 
-	return fmt.Sprintf(addrSend, l.Addr().(*net.TCPAddr).Port, fname), finished, nil
+	if port == 0 {
+		port = l.Addr().(*net.TCPAddr).Port
+	}
+	return fmt.Sprintf(addrSend, port, fname), finished, nil
 }
 
 // Open implements client "open" command.
@@ -141,10 +188,10 @@ func Open(c *lemon.CLI) error {
 		log.Printf("Client URI.Open '%s' to %s:%d", uri, c.Host, c.Port)
 	}
 
-	var finished <-chan struct{}
+	var finished <-chan *http.Server
 	if c.TransLocalfile && fileExists(uri) {
 		var err error
-		uri, finished, err = serveFile(uri, c.TransLoopback, c.Debug)
+		uri, finished, err = serveFile(uri, c.TransFilePort, c.TransFileTimeout, c.TransLoopback, c.Debug)
 		if err != nil {
 			return err
 		}
@@ -165,18 +212,22 @@ func Open(c *lemon.CLI) error {
 	}
 
 	if finished != nil {
-
+		// First we wait for file to be served
 		timer := time.NewTimer(c.TransFileTimeout)
 		defer timer.Stop()
-
 		select {
-		case <-finished:
+		case srv := <-finished:
 			if c.Debug {
 				log.Printf("Client URI.Open to %s:%d done", c.Host, c.Port)
 			}
+			// And then we try to end gracefully to avoid ssh channel complaints.
+			ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(c.TransFileTimeout))
+			_ = srv.Shutdown(ctx)
+			cancel()
 		case <-timer.C:
-			log.Printf("Client URI.Open to %s:%d temeouted waiting for file request", c.Host, c.Port)
+			log.Printf("Client URI.Open to %s:%d timeout waiting for file request", c.Host, c.Port)
 		}
+
 	}
 	return nil
 }
