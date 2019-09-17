@@ -35,9 +35,11 @@ Changes
 ----------------
 
 * Code modernization/simplification/refactoring (go modules and latest compiler, etc).
-* In order for "open" call to work properly when sending back file ("trans-localfile") additional information needs to be transferred because SSH port forwarding has been chosen for security and actual remote address is never available.
+* In order for "open" call to work properly when sending back file ("trans-localfile") additional address information needs to be transferred because SSH port forwarding has been chosen for security and actual remote address is never available.
+* In order to avoid ssh channel errors when dynamic port forwarding is used to get file we need to handle multiple browser connections from "server" end.
+* The idea of local fallback is really unclear to me, since settings default to localhost anyways.
 
-I attempted to support backward compatibility as much as I could leaving argument processing mostly unchanged. Everywhere possible I switched code to go stdlib minimizing external dependencies.
+I attempted to support **backward compatibility** as much as I could, leaving argument processing unchanged (just adding some new aguments with defaults). Everywhere possible I switched code to go stdlib trying to minimize dependencies.
 
 ## Credit
 
