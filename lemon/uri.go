@@ -8,7 +8,7 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 
-	"lemonade/param"
+	"github.com/rupor-github/lemonade/param"
 )
 
 // URI is used by "lemonade" to rpc open commands.

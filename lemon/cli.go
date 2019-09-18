@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"lemonade/misc"
+	"github.com/rupor-github/lemonade/misc"
 )
 
 // LastGitCommit hold git hash from build.

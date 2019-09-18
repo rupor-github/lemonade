@@ -144,7 +144,7 @@ add_custom_target(test_lemon
     COMMAND GOPATH=${GO_PATH} GO111MODULE=on # GOOS=${CROSS_GOOS} GOARCH=${CROSS_GOARCH}
         ${GO_EXECUTABLE} test ${TEST_RUN_ARGS}
             -coverprofile=${PROJECT_BINARY_DIR}/test_lemon.out
-            ${GO_MOD_ARGS} lemonade/lemon
+            ${GO_MOD_ARGS} github.com/rupor-github/lemonade/lemon
     COMMENT "lemon tests..."
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 

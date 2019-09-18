@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
-	"lemonade/client"
-	"lemonade/lemon"
-	"lemonade/server"
+	"github.com/rupor-github/lemonade/client"
+	"github.com/rupor-github/lemonade/lemon"
+	"github.com/rupor-github/lemonade/server"
 )
 
 // Status codes to be set by os.Exit()

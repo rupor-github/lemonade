@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"lemonade/lemon"
-	"lemonade/param"
+	"github.com/rupor-github/lemonade/lemon"
+	"github.com/rupor-github/lemonade/param"
 )
 
 var (

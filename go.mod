@@ -1,4 +1,4 @@
-module lemonade
+module github.com/rupor-github/lemonade
 
 go 1.13
 

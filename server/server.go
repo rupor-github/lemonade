@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/rpc"
 
-	"lemonade/lemon"
+	"github.com/rupor-github/lemonade/lemon"
 )
 
 // Serve starts "lemonade" server backend.

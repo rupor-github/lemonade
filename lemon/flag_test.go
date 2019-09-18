@@ -37,6 +37,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"/usr/bin/xdg-open", "http://example.com"}, CLI{
@@ -48,6 +49,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"xdg-open"}, CLI{
@@ -58,6 +60,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"pbpaste", "--port", "1124"}, CLI{
@@ -68,6 +71,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"/usr/bin/pbpaste", "--port", "1124"}, CLI{
@@ -78,6 +82,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"pbcopy", "hogefuga"}, CLI{
@@ -89,6 +94,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"/usr/bin/pbcopy", "hogefuga"}, CLI{
@@ -100,6 +106,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"lemonade", "--host", "192.168.0.1", "--port", "1124", "open", "http://example.com"}, CLI{
@@ -111,6 +118,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"lemonade", "copy", "hogefuga"}, CLI{
@@ -122,6 +130,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"lemonade", "paste"}, CLI{
@@ -132,6 +141,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"lemonade", "--allow", "192.168.0.0/24", "server", "--port", "1124"}, CLI{
@@ -142,6 +152,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"lemonade", "open", "--trans-loopback=false"}, CLI{
@@ -152,6 +163,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    false,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"lemonade", "open", "--trans-loopback=true"}, CLI{
@@ -162,6 +174,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"lemonade", "open", "--trans-localfile=false"}, CLI{
@@ -172,6 +185,7 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   false,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 
 	assert([]string{"lemonade", "open", "--trans-localfile=true"}, CLI{
@@ -182,5 +196,6 @@ func TestCLIParse(t *testing.T) {
 		TransLoopback:    true,
 		TransLocalfile:   true,
 		TransFileTimeout: time.Second,
+		TransFilePort:    defaultPort + 1,
 	})
 }
